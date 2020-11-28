@@ -1,0 +1,48 @@
+app: rust-test
+service: test
+provider:
+  name: aws
+  runtime: rust
+  logRetentionInDays: 14
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "secretsmanager:GetSecretValue"
+      Resource:
+        - "${env:AURORA_DB_SECRET_ARN}"
+    - Effect: "Allow"
+      Action:
+        - "rds-data:BatchExecuteStatement"
+        - "rds-data:BeginTransaction"
+        - "rds-data:CommitTransaction"
+        - "rds-data:ExecuteStatement"
+        - "rds-data:RollbackTransaction"
+      Resource:
+        - "${env:AURORA_DB_RESOURCE_ARN}"
+custom:
+  stage: '${opt:stage, "dev"}'
+  customDomain:
+    domainName: "${env:DOMAIN_NAME_${self:custom.stage}}"
+    basePath: ""
+    stage: "${self:custom.stage}"
+    certificateName: "${env:CERT_NAME_${self:custom.stage}}"
+    createRoute53Record: true
+
+plugins:
+  - serverless-rust
+  - serverless-dotenv-plugin
+  - serverless-domain-manager
+package:
+  individually: true
+
+functions:
+  test:
+    handler: rust-test
+    timeout: 30
+    events:
+      - http:
+          path: "/"
+          method: GET
+      - http:
+          path: "/"
+          method: POST
