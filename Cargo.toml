@@ -13,5 +13,8 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 log = "0.4"
 simple_logger = "1.11"
-rusoto_rds_data= "0.45.0"
-rusoto_signature = "0.45.0"
+
+# newer versions use unstable feature
+sqlformat = "=0.1.0"
+
+sqlx = { git = "https://github.com/tarkah/sqlx", features = ["runtime-tokio-native-tls", "aurora"], rev="f3e453a12b2b3fd00178c5236ab73ebbb3e139d2" }

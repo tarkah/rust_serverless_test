@@ -1,10 +1,8 @@
 use lambda_http::{handler, http::Method, lambda, Context, IntoResponse, Request, RequestExt};
-use rusoto_rds_data::{ExecuteStatementRequest, RdsData, RdsDataClient};
-use rusoto_signature::Region;
 use serde::{Deserialize, Serialize};
+use sqlx::{aurora::AuroraConnectOptions, AuroraConnection, ConnectOptions};
 
 use std::env;
-use std::str::FromStr;
 
 type Error = Box<dyn std::error::Error + Sync + Send + 'static>;
 
@@ -72,50 +70,17 @@ async fn test_rds() -> Result<AddonResponse, Error> {
     let secret_arn = env::var("AURORA_DB_SECRET_ARN")?;
     let region = env::var("AURORA_DB_REGION")?;
 
-    let client = RdsDataClient::new(Region::from_str(&region)?);
+    let mut connection: AuroraConnection = AuroraConnectOptions::new()
+        .region(&region)
+        .resource_arn(&resource_arn)
+        .secret_arn(&secret_arn)
+        .database("addons")
+        .connect()
+        .await?;
 
-    let statement = ExecuteStatementRequest {
-        resource_arn,
-        secret_arn,
-        database: Some("addons".to_string()),
-        sql: "SELECT id, repository, total_download_count from addon".to_string(),
-        ..Default::default()
-    };
-
-    let records = client
-        .execute_statement(statement)
-        .await?
-        .records
-        .ok_or("No records returned")?;
-
-    let mut addons = vec![];
-
-    for row in records {
-        let mut id = None;
-        let mut repository = None;
-        let mut total_download_count = None;
-
-        for (idx, field) in row.iter().enumerate() {
-            match idx {
-                0 => id = field.long_value,
-                1 => repository = field.string_value.clone(),
-                2 => total_download_count = field.long_value,
-                _ => {}
-            }
-        }
-
-        if let (Some(id), Some(repository), Some(total_download_count)) =
-            (id, repository, total_download_count)
-        {
-            let addon = Addon {
-                id,
-                repository,
-                total_download_count,
-            };
-
-            addons.push(addon);
-        }
-    }
+    let addons = sqlx::query_as::<_, Addon>("SELECT repository FROM addon")
+        .fetch_all(&mut connection)
+        .await?;
 
     let count = addons.len();
 
@@ -138,9 +103,7 @@ struct AddonResponse {
     count: usize,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, sqlx::FromRow)]
 struct Addon {
-    id: i64,
     repository: String,
-    total_download_count: i64,
 }
