@@ -17,4 +17,4 @@ simple_logger = "1.11"
 # newer versions use unstable feature
 sqlformat = "=0.1.0"
 
-sqlx = { git = "https://github.com/tarkah/sqlx", features = ["runtime-tokio-native-tls", "aurora"], rev="f3e453a12b2b3fd00178c5236ab73ebbb3e139d2" }
+sqlx = { git = "https://github.com/tarkah/sqlx", features = ["runtime-tokio-native-tls", "aurora"], rev="ae3b0249269dfc1baccb7b7964db98548bd4027a" }

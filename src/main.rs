@@ -11,6 +11,7 @@ async fn main() -> Result<(), Error> {
     simple_logger::SimpleLogger::new()
         .with_level(log::LevelFilter::Off)
         .with_module_level("rust_test", log::LevelFilter::Debug)
+        .with_module_level("sqlx::query", log::LevelFilter::Debug)
         .init()?;
 
     lambda::run(handler(wrapper)).await?;
@@ -75,12 +76,28 @@ async fn test_rds() -> Result<AddonResponse, Error> {
         .resource_arn(&resource_arn)
         .secret_arn(&secret_arn)
         .database("addons")
+        .log_statements(log::LevelFilter::Debug)
         .connect()
         .await?;
 
-    let addons = sqlx::query_as::<_, Addon>("SELECT repository FROM addon")
-        .fetch_all(&mut connection)
-        .await?;
+    let addons = sqlx::query_as::<_, Addon>(
+        "
+    SELECT id,
+        repository,
+        repository_name,
+        source,
+        description,
+        homepage,
+        image_url,
+        owner_image_url,
+        owner_name,
+        total_download_count,
+        updated_at           
+    FROM addon
+    ",
+    )
+    .fetch_all(&mut connection)
+    .await?;
 
     let count = addons.len();
 
@@ -105,5 +122,15 @@ struct AddonResponse {
 
 #[derive(Serialize, sqlx::FromRow)]
 struct Addon {
+    id: i64,
     repository: String,
+    repository_name: String,
+    source: String,
+    description: Option<String>,
+    homepage: Option<String>,
+    image_url: Option<String>,
+    owner_image_url: Option<String>,
+    owner_name: Option<String>,
+    total_download_count: i64,
+    updated_at: String,
 }
