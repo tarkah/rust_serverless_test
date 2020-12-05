@@ -9,7 +9,7 @@ provider:
       Action:
         - "secretsmanager:GetSecretValue"
       Resource:
-        - "${env:AURORA_DB_SECRET_ARN}"
+        - "${env:AURORA_SECRET_ARN}"
     - Effect: "Allow"
       Action:
         - "rds-data:BatchExecuteStatement"
@@ -18,7 +18,7 @@ provider:
         - "rds-data:ExecuteStatement"
         - "rds-data:RollbackTransaction"
       Resource:
-        - "${env:AURORA_DB_RESOURCE_ARN}"
+        - "${env:AURORA_RESOURCE_ARN}"
 custom:
   stage: '${opt:stage, "dev"}'
   customDomain:

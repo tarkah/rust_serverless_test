@@ -67,15 +67,18 @@ async fn get(_: Request, _: Context) -> Result<serde_json::Value, Error> {
 }
 
 async fn test_rds() -> Result<AddonResponse, Error> {
-    let resource_arn = env::var("AURORA_DB_RESOURCE_ARN")?;
-    let secret_arn = env::var("AURORA_DB_SECRET_ARN")?;
-    let region = env::var("AURORA_DB_REGION")?;
+    let db_type = env::var("AURORA_DB_TYPE")?.parse()?;
+    let resource_arn = env::var("AURORA_RESOURCE_ARN")?;
+    let secret_arn = env::var("AURORA_SECRET_ARN")?;
+    let region = env::var("AURORA_REGION")?;
+    let database = env::var("AURORA_DATABASE")?;
 
     let mut connection: AuroraConnection = AuroraConnectOptions::new()
+        .db_type(db_type)
         .region(&region)
         .resource_arn(&resource_arn)
         .secret_arn(&secret_arn)
-        .database("addons")
+        .database(&database)
         .log_statements(log::LevelFilter::Debug)
         .connect()
         .await?;
@@ -93,7 +96,7 @@ async fn test_rds() -> Result<AddonResponse, Error> {
         owner_name,
         total_download_count,
         updated_at           
-    FROM addon
+    FROM addons
     ",
     )
     .fetch_all(&mut connection)

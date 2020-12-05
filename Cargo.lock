@@ -1596,7 +1596,7 @@ dependencies = [
 [[package]]
 name = "sqlx"
 version = "0.4.1"
-source = "git+https://github.com/tarkah/sqlx?rev=ae3b0249269dfc1baccb7b7964db98548bd4027a#ae3b0249269dfc1baccb7b7964db98548bd4027a"
+source = "git+https://github.com/tarkah/sqlx?rev=88e1e43f69c5376c724a18acd68f04f3a252050f#88e1e43f69c5376c724a18acd68f04f3a252050f"
 dependencies = [
  "sqlx-core",
  "sqlx-macros",
@@ -1605,7 +1605,7 @@ dependencies = [
 [[package]]
 name = "sqlx-core"
 version = "0.4.0"
-source = "git+https://github.com/tarkah/sqlx?rev=ae3b0249269dfc1baccb7b7964db98548bd4027a#ae3b0249269dfc1baccb7b7964db98548bd4027a"
+source = "git+https://github.com/tarkah/sqlx?rev=88e1e43f69c5376c724a18acd68f04f3a252050f#88e1e43f69c5376c724a18acd68f04f3a252050f"
 dependencies = [
  "ahash",
  "atoi",
@@ -1645,7 +1645,7 @@ dependencies = [
 [[package]]
 name = "sqlx-macros"
 version = "0.4.0"
-source = "git+https://github.com/tarkah/sqlx?rev=ae3b0249269dfc1baccb7b7964db98548bd4027a#ae3b0249269dfc1baccb7b7964db98548bd4027a"
+source = "git+https://github.com/tarkah/sqlx?rev=88e1e43f69c5376c724a18acd68f04f3a252050f#88e1e43f69c5376c724a18acd68f04f3a252050f"
 dependencies = [
  "dotenv",
  "either",
@@ -1663,7 +1663,7 @@ dependencies = [
 [[package]]
 name = "sqlx-rt"
 version = "0.2.0"
-source = "git+https://github.com/tarkah/sqlx?rev=ae3b0249269dfc1baccb7b7964db98548bd4027a#ae3b0249269dfc1baccb7b7964db98548bd4027a"
+source = "git+https://github.com/tarkah/sqlx?rev=88e1e43f69c5376c724a18acd68f04f3a252050f#88e1e43f69c5376c724a18acd68f04f3a252050f"
 dependencies = [
  "native-tls",
  "once_cell",
